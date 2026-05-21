@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:javacomdb_test;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+javacom:
+  security:
+    jwt:
+      secret: "U3VwZXJTZWNyZXRLZXlGb3JKYXZhQ29tQVBJVGhhdElzTG9uZ0Vub3VnaEZvckhTMjU2QWxnb3JpdGhtMjU2Yml0cyE="
+      expiration-minutes: 60
+      issuer: javacom-api-test
+  cli:
+    enabled: false
