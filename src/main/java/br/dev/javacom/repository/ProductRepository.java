@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findAllByActiveTrueOrderByNameAsc();
+    List<Product> findAllByActiveTrueOrderByIdAsc();
 
     Page<Product> findAllByActiveTrue(Pageable pageable);
 

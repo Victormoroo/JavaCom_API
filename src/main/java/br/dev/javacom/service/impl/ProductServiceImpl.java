@@ -26,9 +26,9 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public List<ProductResponse> listAll(boolean activeOnly) {
         List<Product> products = activeOnly
-                ? productRepository.findAllByActiveTrueOrderByNameAsc()
+                ? productRepository.findAllByActiveTrueOrderByIdAsc()
                 : productRepository.findAll().stream()
-                        .sorted(Comparator.comparing(Product::getName))
+                        .sorted(Comparator.comparing(Product::getId))
                         .toList();
         return productMapper.toResponseList(products);
     }
@@ -90,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponse> listStock() {
         return productMapper.toResponseList(
                 productRepository.findAll().stream()
-                        .sorted(Comparator.comparing(Product::getName))
+                        .sorted(Comparator.comparing(Product::getId))
                         .toList()
         );
     }

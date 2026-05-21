@@ -115,13 +115,13 @@ class ProductServiceImplTest {
 
     @Test
     void listAll_returnsActiveOnlyWhenFlagTrue() {
-        when(productRepository.findAllByActiveTrueOrderByNameAsc()).thenReturn(List.of(sample));
+        when(productRepository.findAllByActiveTrueOrderByIdAsc()).thenReturn(List.of(sample));
         when(productMapper.toResponseList(any())).thenReturn(List.of(stubResponse(sample)));
 
         List<ProductResponse> result = service.listAll(true);
 
         assertThat(result).hasSize(1);
-        verify(productRepository).findAllByActiveTrueOrderByNameAsc();
+        verify(productRepository).findAllByActiveTrueOrderByIdAsc();
     }
 
     private ProductResponse stubResponse(Product p) {

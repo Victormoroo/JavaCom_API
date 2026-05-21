@@ -19,17 +19,17 @@ class ProductRepositoryTest {
     private ProductRepository productRepository;
 
     @Test
-    void findAllByActiveTrueOrderByNameAsc_returnsActiveOnly() {
-        productRepository.save(Product.builder()
+    void findAllByActiveTrueOrderByIdAsc_returnsActiveOnly() {
+        Product alpha = productRepository.save(Product.builder()
                 .name("Alpha").description("d").price(new BigDecimal("10")).stockQuantity(1).active(true).build());
         productRepository.save(Product.builder()
                 .name("Beta").description("d").price(new BigDecimal("10")).stockQuantity(1).active(false).build());
-        productRepository.save(Product.builder()
+        Product charlie = productRepository.save(Product.builder()
                 .name("Charlie").description("d").price(new BigDecimal("10")).stockQuantity(1).active(true).build());
 
-        List<Product> actives = productRepository.findAllByActiveTrueOrderByNameAsc();
+        List<Product> actives = productRepository.findAllByActiveTrueOrderByIdAsc();
 
-        assertThat(actives).extracting(Product::getName).containsExactly("Alpha", "Charlie");
+        assertThat(actives).extracting(Product::getId).containsExactly(alpha.getId(), charlie.getId());
     }
 
     @Test
