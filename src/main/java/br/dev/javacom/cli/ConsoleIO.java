@@ -34,6 +34,12 @@ public class ConsoleIO {
         out.println(line);
     }
 
+    public void clear() {
+        // ANSI: move cursor to home + erase entire screen + erase scrollback
+        out.print("\033[H\033[2J\033[3J");
+        out.flush();
+    }
+
     public String readLine(String prompt) {
         out.print(prompt);
         try {
