@@ -68,6 +68,15 @@ public class AdminMenu {
     }
 
     private void createProduct() {
+        console.println("Pressione ENTER para iniciar o cadastro · 0 para cancelar e voltar ao menu");
+        String start = console.readLine("> ");
+        if ("0".equals(start.trim())) {
+            console.println();
+            console.println("Cadastro cancelado.");
+            return;
+        }
+        console.println();
+
         String name = console.readNonBlank("Nome: ");
         String description = console.readNonBlank("Descrição: ");
         BigDecimal price = console.readPositiveBigDecimal("Preço (ex: 1499.90): ");
@@ -75,7 +84,8 @@ public class AdminMenu {
 
         ProductResponse created = productService.create(
                 new ProductRequest(name, description, price, stock, true));
-        console.println("Produto criado com ID: " + created.id());
+        console.println();
+        console.println("✓ Produto criado com ID " + created.id());
         console.println();
         productPresenter.printDetail(created);
     }
