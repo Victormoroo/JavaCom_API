@@ -54,6 +54,18 @@ public class ConsoleIO {
         clear();
     }
 
+    public void runScreenLoop(String title, Runnable action) {
+        clear();
+        printHeader(title);
+        try {
+            action.run();
+        } catch (RuntimeException ex) {
+            println();
+            println("Erro: " + ex.getMessage());
+        }
+        clear();
+    }
+
     public String readLine(String prompt) {
         out.print(prompt);
         try {
@@ -92,6 +104,22 @@ public class ConsoleIO {
             } catch (NumberFormatException ex) {
                 println("Valor inválido. Digite um número inteiro.");
             }
+        }
+    }
+
+    public String readNonBlank(String prompt) {
+        while (true) {
+            String value = readLine(prompt);
+            if (!value.isBlank()) return value;
+            println("Valor obrigatório — não pode ficar em branco.");
+        }
+    }
+
+    public BigDecimal readPositiveBigDecimal(String prompt) {
+        while (true) {
+            BigDecimal value = readBigDecimal(prompt);
+            if (value.signum() > 0) return value;
+            println("Valor deve ser maior que zero.");
         }
     }
 

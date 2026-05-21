@@ -42,7 +42,7 @@ public class UserMenu {
             int choice = console.readInt("Escolha uma opção: ", 0, 10);
             switch (choice) {
                 case 1 -> console.runScreen("LISTAR PRODUTOS", this::listProducts);
-                case 2 -> console.runScreen("BUSCAR PRODUTO POR ID", this::findProduct);
+                case 2 -> console.runScreenLoop("BUSCAR PRODUTO POR ID", this::findProductLoop);
                 case 3 -> console.runScreen("VER ESTOQUE", this::listStock);
                 case 4 -> console.runScreen("ADICIONAR PRODUTO AO CARRINHO", () -> addToCart(user));
                 case 5 -> console.runScreen("REMOVER PRODUTO DO CARRINHO", () -> removeFromCart(user));
@@ -60,9 +60,19 @@ public class UserMenu {
         productPresenter.printList(productService.listAll(true));
     }
 
-    private void findProduct() {
-        Long id = console.readLong("ID do produto: ");
-        productPresenter.printDetail(productService.findById(id));
+    private void findProductLoop() {
+        console.println("Digite o ID de um produto · 0 para voltar ao menu");
+        console.println();
+        while (true) {
+            Long id = console.readLong("ID: ");
+            if (id == 0L) return;
+            try {
+                productPresenter.printDetail(productService.findById(id));
+            } catch (RuntimeException ex) {
+                console.println("  ✗ " + ex.getMessage());
+            }
+            console.println();
+        }
     }
 
     private void listStock() {
