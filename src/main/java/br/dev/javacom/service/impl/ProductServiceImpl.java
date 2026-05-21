@@ -40,6 +40,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ProductResponse findActiveById(Long id) {
+        Product product = loadProduct(id);
+        if (!product.isActive()) {
+            throw ResourceNotFoundException.of("Produto", id);
+        }
+        return productMapper.toResponse(product);
+    }
+
+    @Override
     @Transactional
     public ProductResponse create(ProductRequest request) {
         if (productRepository.existsByNameIgnoreCase(request.name())) {

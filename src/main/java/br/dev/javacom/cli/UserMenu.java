@@ -67,7 +67,7 @@ public class UserMenu {
             Long id = console.readLong("ID: ");
             if (id == 0L) return;
             try {
-                productPresenter.printDetail(productService.findById(id));
+                productPresenter.printDetail(productService.findActiveById(id));
             } catch (RuntimeException ex) {
                 console.println("  ✗ " + ex.getMessage());
             }
