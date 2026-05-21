@@ -19,6 +19,7 @@ public class AdminMenu {
     private final ProductService productService;
     private final OrderService orderService;
     private final ConsoleIO console;
+    private final ProductPresenter productPresenter;
 
     public void run(User admin) {
         boolean stay = true;
@@ -34,37 +35,29 @@ public class AdminMenu {
             console.println("0 - Sair");
 
             int choice = console.readInt("Escolha uma opção: ", 0, 7);
-            try {
-                switch (choice) {
-                    case 1 -> listProducts();
-                    case 2 -> findProduct();
-                    case 3 -> createProduct();
-                    case 4 -> updateProduct();
-                    case 5 -> deactivateProduct();
-                    case 6 -> listStock();
-                    case 7 -> listOrders();
-                    case 0 -> stay = false;
-                    default -> console.println("Opção inválida");
-                }
-            } catch (RuntimeException ex) {
-                console.println("Erro: " + ex.getMessage());
+            switch (choice) {
+                case 1 -> console.runScreen("LISTAR PRODUTOS", this::listProducts);
+                case 2 -> console.runScreen("BUSCAR PRODUTO POR ID", this::findProduct);
+                case 3 -> console.runScreen("CADASTRAR PRODUTO", this::createProduct);
+                case 4 -> console.runScreen("ATUALIZAR PRODUTO", this::updateProduct);
+                case 5 -> console.runScreen("DESATIVAR PRODUTO", this::deactivateProduct);
+                case 6 -> console.runScreen("VER ESTOQUE", this::listStock);
+                case 7 -> console.runScreen("LISTAR PEDIDOS", this::listOrders);
+                case 0 -> stay = false;
             }
         }
     }
 
     private void listProducts() {
-        List<ProductResponse> products = productService.listAll(false);
-        printProducts(products);
+        productPresenter.printList(productService.listAll(false));
     }
 
     private void findProduct() {
         Long id = console.readLong("ID do produto: ");
-        ProductResponse p = productService.findById(id);
-        printProduct(p);
+        productPresenter.printDetail(productService.findById(id));
     }
 
     private void createProduct() {
-        console.printHeader("CADASTRO DE PRODUTO");
         String name = console.readLine("Nome: ");
         String description = console.readLine("Descrição: ");
         BigDecimal price = console.readBigDecimal("Preço (ex: 1499.90): ");
@@ -73,13 +66,16 @@ public class AdminMenu {
         ProductResponse created = productService.create(
                 new ProductRequest(name, description, price, stock, true));
         console.println("Produto criado com ID: " + created.id());
-        printProduct(created);
+        console.println();
+        productPresenter.printDetail(created);
     }
 
     private void updateProduct() {
         Long id = console.readLong("ID do produto a atualizar: ");
         ProductResponse current = productService.findById(id);
-        console.println("Atual: " + current.name() + " - R$ " + current.price() + " - estoque " + current.stockQuantity());
+        console.println("Estado atual:");
+        productPresenter.printDetail(current);
+        console.println();
 
         String name = console.readLine("Novo nome: ");
         String description = console.readLine("Nova descrição: ");
@@ -89,7 +85,9 @@ public class AdminMenu {
 
         ProductResponse updated = productService.update(id,
                 new ProductRequest(name, description, price, stock, active));
-        printProduct(updated);
+        console.println();
+        console.println("Atualizado:");
+        productPresenter.printDetail(updated);
     }
 
     private void deactivateProduct() {
@@ -101,15 +99,10 @@ public class AdminMenu {
     }
 
     private void listStock() {
-        console.printHeader("ESTOQUE");
-        productService.listStock().forEach(p ->
-                console.println("[%d] %s | preço R$ %s | estoque %d | %s".formatted(
-                        p.id(), p.name(), p.price(), p.stockQuantity(),
-                        p.active() ? "ATIVO" : "INATIVO")));
+        productPresenter.printStock(productService.listStock());
     }
 
     private void listOrders() {
-        console.printHeader("TODOS OS PEDIDOS");
         List<OrderResponse> orders = orderService.listAll();
         if (orders.isEmpty()) {
             console.println("Nenhum pedido encontrado.");
@@ -120,19 +113,4 @@ public class AdminMenu {
                         o.id(), o.username(), o.totalAmount(), o.status(), o.createdAt())));
     }
 
-    private void printProducts(List<ProductResponse> products) {
-        if (products.isEmpty()) {
-            console.println("Nenhum produto cadastrado.");
-            return;
-        }
-        products.forEach(this::printProduct);
-    }
-
-    private void printProduct(ProductResponse p) {
-        console.println("[%d] %s | R$ %s | estoque %d | %s%s".formatted(
-                p.id(), p.name(), p.price(), p.stockQuantity(),
-                p.active() ? "ATIVO" : "INATIVO",
-                p.purchasable() ? "" : " (não comprável)"));
-        console.println("    " + p.description());
-    }
 }

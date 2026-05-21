@@ -4,7 +4,6 @@ import br.dev.javacom.dto.request.AddCartItemRequest;
 import br.dev.javacom.dto.request.UpdateCartItemRequest;
 import br.dev.javacom.dto.response.CartResponse;
 import br.dev.javacom.dto.response.OrderResponse;
-import br.dev.javacom.dto.response.ProductResponse;
 import br.dev.javacom.entity.User;
 import br.dev.javacom.service.CartService;
 import br.dev.javacom.service.OrderService;
@@ -22,6 +21,7 @@ public class UserMenu {
     private final CartService cartService;
     private final OrderService orderService;
     private final ConsoleIO console;
+    private final ProductPresenter productPresenter;
 
     public void run(User user) {
         boolean stay = true;
@@ -40,47 +40,33 @@ public class UserMenu {
             console.println(" 0 - Sair");
 
             int choice = console.readInt("Escolha uma opção: ", 0, 10);
-            try {
-                switch (choice) {
-                    case 1 -> listProducts();
-                    case 2 -> findProduct();
-                    case 3 -> listStock();
-                    case 4 -> addToCart(user);
-                    case 5 -> removeFromCart(user);
-                    case 6 -> updateCartItem(user);
-                    case 7 -> showCart(user);
-                    case 8 -> clearCart(user);
-                    case 9 -> checkout(user);
-                    case 10 -> listMyOrders(user);
-                    case 0 -> stay = false;
-                    default -> console.println("Opção inválida");
-                }
-            } catch (RuntimeException ex) {
-                console.println("Erro: " + ex.getMessage());
+            switch (choice) {
+                case 1 -> console.runScreen("LISTAR PRODUTOS", this::listProducts);
+                case 2 -> console.runScreen("BUSCAR PRODUTO POR ID", this::findProduct);
+                case 3 -> console.runScreen("VER ESTOQUE", this::listStock);
+                case 4 -> console.runScreen("ADICIONAR PRODUTO AO CARRINHO", () -> addToCart(user));
+                case 5 -> console.runScreen("REMOVER PRODUTO DO CARRINHO", () -> removeFromCart(user));
+                case 6 -> console.runScreen("ALTERAR QUANTIDADE NO CARRINHO", () -> updateCartItem(user));
+                case 7 -> console.runScreen("VER CARRINHO", () -> showCart(user));
+                case 8 -> console.runScreen("LIMPAR CARRINHO", () -> clearCart(user));
+                case 9 -> console.runScreen("FINALIZAR COMPRA", () -> checkout(user));
+                case 10 -> console.runScreen("MEUS PEDIDOS", () -> listMyOrders(user));
+                case 0 -> stay = false;
             }
         }
     }
 
     private void listProducts() {
-        List<ProductResponse> products = productService.listAll(true);
-        if (products.isEmpty()) {
-            console.println("Nenhum produto disponível.");
-            return;
-        }
-        products.forEach(this::printProduct);
+        productPresenter.printList(productService.listAll(true));
     }
 
     private void findProduct() {
         Long id = console.readLong("ID do produto: ");
-        printProduct(productService.findById(id));
+        productPresenter.printDetail(productService.findById(id));
     }
 
     private void listStock() {
-        console.printHeader("ESTOQUE");
-        productService.listStock().forEach(p ->
-                console.println("[%d] %s | preço R$ %s | estoque %d%s".formatted(
-                        p.id(), p.name(), p.price(), p.stockQuantity(),
-                        p.purchasable() ? "" : " (indisponível)")));
+        productPresenter.printStock(productService.listStock());
     }
 
     private void addToCart(User user) {
@@ -126,7 +112,6 @@ public class UserMenu {
     }
 
     private void listMyOrders(User user) {
-        console.printHeader("MEUS PEDIDOS");
         List<OrderResponse> orders = orderService.listMine(user);
         if (orders.isEmpty()) {
             console.println("Você ainda não fez pedidos.");
@@ -147,10 +132,4 @@ public class UserMenu {
         console.println("TOTAL: R$ " + cart.total() + " | " + cart.itemCount() + " item(ns)");
     }
 
-    private void printProduct(ProductResponse p) {
-        console.println("[%d] %s | R$ %s | estoque %d%s".formatted(
-                p.id(), p.name(), p.price(), p.stockQuantity(),
-                p.purchasable() ? "" : " (indisponível)"));
-        console.println("    " + p.description());
-    }
 }

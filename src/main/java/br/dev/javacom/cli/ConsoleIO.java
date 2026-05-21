@@ -40,6 +40,20 @@ public class ConsoleIO {
         out.flush();
     }
 
+    public void runScreen(String title, Runnable action) {
+        clear();
+        printHeader(title);
+        try {
+            action.run();
+        } catch (RuntimeException ex) {
+            println();
+            println("Erro: " + ex.getMessage());
+        }
+        println();
+        readLine("Pressione ENTER para voltar ao menu... ");
+        clear();
+    }
+
     public String readLine(String prompt) {
         out.print(prompt);
         try {
