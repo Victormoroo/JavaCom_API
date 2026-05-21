@@ -1,0 +1,161 @@
+###################################
+# Claude Code / AI assistants
+###################################
+.claude/
+CLAUDE.md
+.aider*
+.cursor/
+.continue/
+.windsurf/
+.github/copilot-*
+
+###################################
+# Build output
+###################################
+target/
+build/
+out/
+bin/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+###################################
+# Maven
+###################################
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+# Preserve Maven Wrapper config if added later
+!.mvn/wrapper/maven-wrapper.properties
+
+###################################
+# Gradle (caso migre futuramente)
+###################################
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+###################################
+# IDEs
+###################################
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse / STS
+.classpath
+.project
+.settings/
+.factorypath
+.springBeans
+.sts4-cache/
+.apt_generated/
+.apt_generated_test/
+
+# NetBeans
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+###################################
+# Spring Boot
+###################################
+HELP.md
+application-local.yml
+application-local.properties
+application-secret.yml
+application-secret.properties
+
+###################################
+# Logs
+###################################
+logs/
+*.log
+*.log.*
+
+###################################
+# Java VM crash logs
+###################################
+hs_err_pid*.log
+replay_pid*.log
+*.hprof
+
+###################################
+# Test coverage / reports
+###################################
+*.exec
+jacoco.exec
+coverage/
+surefire-reports/
+failsafe-reports/
+
+###################################
+# Bancos de dados locais (H2, SQLite)
+###################################
+*.h2.db
+*.mv.db
+*.trace.db
+*.lock.db
+*.sqlite
+*.sqlite3
+*.db
+
+###################################
+# Segredos / variáveis sensíveis
+###################################
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+secrets/
+secret.properties
+
+###################################
+# OS — Windows
+###################################
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+###################################
+# OS — macOS
+###################################
+.DS_Store
+.AppleDouble
+.LSOverride
+
+###################################
+# OS — Linux
+###################################
+*~
+.directory
+.fuse_hidden*
+.Trash-*
+
+###################################
+# Editores / temporários
+###################################
+*.swp
+*.swo
+*.bak
+*.orig
+*.tmp
+*.pid
