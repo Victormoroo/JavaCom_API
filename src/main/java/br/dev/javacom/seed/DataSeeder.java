@@ -35,7 +35,7 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedUsers() {
         if (userRepository.count() > 0) {
-            log.info("Usuários já existem — pulando seed de usuários.");
+            log.debug("Usuários já existem — pulando seed de usuários.");
             return;
         }
 
@@ -60,7 +60,7 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedProducts() {
         if (productRepository.count() > 0) {
-            log.info("Produtos já existem — pulando seed de produtos.");
+            log.debug("Produtos já existem — pulando seed de produtos.");
             return;
         }
 
