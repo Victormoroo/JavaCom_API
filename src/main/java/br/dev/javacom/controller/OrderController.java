@@ -1,9 +1,18 @@
 package br.dev.javacom.controller;
 
+import br.dev.javacom.config.OpenApiConfig;
 import br.dev.javacom.dto.response.OrderResponse;
+import br.dev.javacom.exception.ApiError;
 import br.dev.javacom.security.AuthenticatedUserProvider;
 import br.dev.javacom.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +29,36 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Orders")
 @PreAuthorize("hasRole('USER')")
+@SecurityRequirement(name = OpenApiConfig.BEARER_SCHEME)
 public class OrderController {
 
     private final OrderService orderService;
     private final AuthenticatedUserProvider userProvider;
 
+    @Operation(summary = "Lista os pedidos do usuário autenticado",
+            description = "Retorna os pedidos ordenados do mais recente para o mais antigo.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de pedidos",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderResponse.class))))
+    })
     @GetMapping
-    @Operation(summary = "Lista os pedidos do usuário autenticado")
     public ResponseEntity<List<OrderResponse>> listMine() {
         return ResponseEntity.ok(orderService.listMine(userProvider.getCurrentUser()));
     }
 
+    @Operation(summary = "Detalha um pedido próprio",
+            description = "Retorna apenas pedidos pertencentes ao usuário autenticado.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pedido encontrado",
+                    content = @Content(schema = @Schema(implementation = OrderResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Pedido pertence a outro usuário",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "404", description = "Pedido não encontrado",
+                    content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
     @GetMapping("/{id}")
-    @Operation(summary = "Detalha um pedido próprio")
-    public ResponseEntity<OrderResponse> getMine(@PathVariable Long id) {
+    public ResponseEntity<OrderResponse> getMine(
+            @Parameter(description = "ID do pedido", example = "1") @PathVariable Long id) {
         return ResponseEntity.ok(orderService.findMine(userProvider.getCurrentUser(), id));
     }
 }

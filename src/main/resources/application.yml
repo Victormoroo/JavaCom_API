@@ -39,12 +39,26 @@ springdoc:
     operations-sorter: method
     tags-sorter: alpha
     display-request-duration: true
+    try-it-out-enabled: true
+    filter: true
+    persist-authorization: true
+    doc-expansion: none
+    default-models-expand-depth: 1
+    default-model-expand-depth: 2
+    syntax-highlight:
+      activated: true
+      theme: monokai
+  show-actuator: false
+  group-configs:
+    - group: javacom-api-v1
+      paths-to-match: /api/**
+      display-name: JavaCom API v1
 
 javacom:
   security:
     jwt:
-      secret: "U3VwZXJTZWNyZXRLZXlGb3JKYXZhQ29tQVBJVGhhdElzTG9uZ0Vub3VnaEZvckhTMjU2QWxnb3JpdGhtMjU2Yml0cyE="
-      expiration-minutes: 120
+      secret: "${JAVACOM_JWT_SECRET:U3VwZXJTZWNyZXRLZXlGb3JKYXZhQ29tQVBJVGhhdElzTG9uZ0Vub3VnaEZvckhTMjU2QWxnb3JpdGhtMjU2Yml0cyE=}"
+      expiration-minutes: ${JAVACOM_JWT_EXPIRATION_MINUTES:120}
       issuer: javacom-api
 
 logging:
