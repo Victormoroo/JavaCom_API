@@ -46,8 +46,6 @@ javacom:
       secret: "U3VwZXJTZWNyZXRLZXlGb3JKYXZhQ29tQVBJVGhhdElzTG9uZ0Vub3VnaEZvckhTMjU2QWxnb3JpdGhtMjU2Yml0cyE="
       expiration-minutes: 120
       issuer: javacom-api
-  cli:
-    enabled: true
 
 logging:
   level:
